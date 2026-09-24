@@ -11,3 +11,14 @@ Deepest vulnerable chain:
     apache-airflow -> apache-airflow-providers-http -> requests -> urllib3
 
 Ten vulnerable packages are present across depths 1-4.
+
+## Manifest format matters
+
+`pyproject.toml` deliberately uses the legacy `[tool.poetry.dependencies]`
+format. Semgrep's poetry manifest parser reads only that table:
+
+    parsed_manifest.get("tool", {}).get("poetry", {}).get("dependencies", {})
+
+With the modern PEP 621 `[project] dependencies = [...]` form (the Poetry 2.x
+default), `manifest_deps` is empty, every package resolves to transitivity
+`Unknown`, and no dependency path is rendered.
